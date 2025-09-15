@@ -5,40 +5,107 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Do'a Harian - Si Kecil Pintar (Audio doa1..doa15)</title>
   <style>
-    body{font-family: 'Comic Sans MS', cursive, sans-serif; background: linear-gradient(to bottom right,#e3f2fd,#bbdefb); margin:0; padding:0}
-    header{background:#42a5f5;color:#fff;padding:18px;text-align:center;font-size:24px;border-bottom-left-radius:16px;border-bottom-right-radius:16px}
-    .container{max-width:900px;margin:18px auto;padding:16px}
-    .doa{background:#ffffffdd;padding:14px;border-radius:12px;margin-bottom:12px;box-shadow:0 4px 12px rgba(0,0,0,0.12)}
-    .arab{font-size:20px;text-align:right;color:#2c3e50;margin:6px 0}
-    .latin{font-size:15px;color:#555;margin:6px 0}
-    .arti{font-size:14px;color:#333;font-style:italic;margin:6px 0}
-    .btn-audio{background:#42a5f5;color:white;border:none;padding:8px 12px;border-radius:10px;margin-right:6px;cursor:pointer}
-    .btn-audio:hover{background:#1e88e5}
-    .controls{margin-top:8px}
-    .page-info{margin-top:8px;color:#01579b;font-weight:bold}
-    .note{font-size:13px;color:#444;margin-top:8px}
-    .error{color:#b71c1c;font-weight:bold}
-    .btn-back{display:inline-block;margin:14px auto;padding:10px 18px;background:linear-gradient(135deg,#ff7043,#d84315);color:white;border-radius:12px;text-decoration:none}
+    body {
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      background: linear-gradient(to bottom right,#e3f2fd,#bbdefb);
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background: #42a5f5;
+      color: #fff;
+      padding: 18px;
+      text-align: center;
+      font-size: 24px;
+      border-bottom-left-radius: 16px;
+      border-bottom-right-radius: 16px;
+    }
+    .container {
+      max-width: 900px;
+      margin: 18px auto;
+      padding: 16px;
+    }
+    .doa {
+      background: #ffffffdd;
+      padding: 14px;
+      border-radius: 12px;
+      margin-bottom: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+    }
+    .arab {
+      font-size: 20px;
+      text-align: right;
+      color: #2c3e50;
+      margin: 6px 0;
+    }
+    .latin {
+      font-size: 15px;
+      color: #555;
+      margin: 6px 0;
+    }
+    .arti {
+      font-size: 14px;
+      color: #333;
+      font-style: italic;
+      margin: 6px 0;
+    }
+    .btn-audio {
+      background: #42a5f5;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 10px;
+      margin-right: 6px;
+      cursor: pointer;
+    }
+    .btn-audio:hover {
+      background: #1e88e5;
+    }
+    .controls {
+      margin-top: 8px;
+    }
+    .page-info {
+      margin-top: 8px;
+      color: #01579b;
+      font-weight: bold;
+    }
+    .note {
+      font-size: 13px;
+      color: #444;
+      margin-top: 8px;
+    }
+    .error {
+      color: #b71c1c;
+      font-weight: bold;
+    }
+    .btn-back {
+      display: inline-block;
+      margin: 14px auto;
+      padding: 10px 18px;
+      background: linear-gradient(135deg,#ff7043,#d84315);
+      color: white;
+      border-radius: 12px;
+      text-decoration: none;
+    }
   </style>
 </head>
 <body>
   <header>🙏 Do'a Harian</header>
 
   <div class="container" id="main">
-    <p class="note">Tekan <strong>Dengarkan</strong> untuk memutar audio <code>audio/doa1.mp3</code> … <code>audio/doa15.mp3</code>. Jika file tidak ditemukan, akan muncul pemberitahuan.</p>
+    <p class="note">
+      Tekan <strong>Dengarkan</strong> untuk memutar audio 
+    </p>
 
     <div id="doaList"></div>
-
     <div class="page-info" id="pageInfo"></div>
 
     <a class="btn-back" href="menu.html">⬅ Kembali ke Menu</a>
   </div>
 
-  <!-- Audio player (tersimpan tersembunyi, digunakan untuk memutar file doaX.mp3) -->
   <audio id="audioPlayer" controls style="width:100%;max-width:900px;display:block;margin:12px auto 24px auto"></audio>
 
   <script>
-    // ------------ data doa (15 item) ------------
     const doaListData = [
       { judul: "Doa Sebelum Makan", arab:"اللَّهُمَّ بَارِكْ لَنَا فِيمَا رَزَقْتَنَا وَقِنَا عَذَابَ النَّارِ", latin:"Allāhumma bārik lanā fīmā razaqtanā waqinā ‘adzāban-nār", arti:"Ya Allah, berkahilah rezeki yang Engkau berikan kepada kami dan lindungilah kami dari siksa neraka" },
       { judul: "Doa Syukur", arab:"الْحَمْدُ لِلَّهِ الَّذِي أَطْعَمَنَا وَسَقَانَا وَجَعَلَنَا مُسْلِمِينَ", latin:"Alhamdulillāhil-ladzī ath‘amanā wa saqānā wa ja‘alanā muslimīn", arti:"Segala puji bagi Allah yang telah memberi kami makan, minum, dan menjadikan kami seorang muslim" },
@@ -60,9 +127,8 @@
     const doaListContainer = document.getElementById('doaList');
     const audioPlayer = document.getElementById('audioPlayer');
 
-    // Render daftar doa dengan tombol play/pause/stop
     doaListData.forEach((doa, idx) => {
-      const index = idx + 1; // 1..15 (sesuai nama file doa1.mp3..doa15.mp3)
+      const index = idx + 1;
       const div = document.createElement('div');
       div.className = 'doa';
       div.innerHTML = `
@@ -80,24 +146,20 @@
       doaListContainer.appendChild(div);
     });
 
-    // Fungsi main: play file audio/doa{n}.mp3
     function playDoa(n) {
-      const filePath = `audio/doa${n}.mp3`;
-      // tampilkan status kecil
+      const filePath = `doa${n}.mp3`;
       document.querySelectorAll(`[id^="status-"]`).forEach(el => el.textContent = "");
       const statusEl = document.getElementById(`status-${n}`);
       statusEl.textContent = "Memuat…";
 
-      // ubah sumber, mulai mainkan
       audioPlayer.pause();
       audioPlayer.src = filePath;
       audioPlayer.load();
       audioPlayer.play().then(() => {
         statusEl.textContent = "Sedang diputar";
       }).catch(err => {
-        // bisa muncul bila autoplay diblokir atau file tidak ada
         if (err.name === 'NotAllowedError') {
-          statusEl.textContent = "Putar diblokir (sentuh untuk izinkan)";
+          statusEl.textContent = "Putar diblokir (klik untuk izinkan)";
         } else {
           statusEl.textContent = "Gagal memutar — periksa file audio.";
         }
@@ -106,7 +168,6 @@
 
     function pauseAudio() {
       audioPlayer.pause();
-      // update semua status menjadi paused jika ada yg playing
       document.querySelectorAll(`[id^="status-"]`).forEach(el => {
         if (el.textContent === "Sedang diputar") el.textContent = "Dijeda";
       });
@@ -120,29 +181,21 @@
       });
     }
 
-    // bila file audio error (mis. tidak ditemukan), beri notifikasi
-    audioPlayer.addEventListener('error', (e) => {
+    audioPlayer.addEventListener('error', () => {
       const src = audioPlayer.src || '';
-      // cari index dari nama file; tampilkan message di status yang sesuai bila ada
       const match = src.match(/doa(\d+)\.mp3$/i);
       if (match) {
         const i = match[1];
         const statusEl = document.getElementById(`status-${i}`);
         if (statusEl) statusEl.innerHTML = `<span class="error">File audio tidak ditemukan: doa${i}.mp3</span>`;
-      } else {
-        alert('Terjadi kesalahan memutar audio.');
       }
     });
 
-    // tombol audio player native: bila selesai, bersihkan status
     audioPlayer.addEventListener('ended', () => {
       document.querySelectorAll(`[id^="status-"]`).forEach(el => {
         if (el.textContent === "Sedang diputar") el.textContent = "";
       });
     });
-
-    // catatan: pastikan folder audio/ berisi doa1.mp3 ... doa15.mp3
-    // contoh: /path/to/page.html  dan  /path/to/audio/doa1.mp3
   </script>
 </body>
 </html>
