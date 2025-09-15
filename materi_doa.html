@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Do'a Harian - Si Kecil Pintar</title>
+  <style>
+    body {
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(to bottom right, #e3f2fd, #bbdefb);
+    }
+    header {
+      background: #42a5f5;
+      color: white;
+      text-align: center;
+      padding: 20px;
+      font-size: 26px;
+      border-bottom-left-radius: 20px;
+      border-bottom-right-radius: 20px;
+    }
+    .container {
+      padding: 20px;
+    }
+    .doa {
+      background: #ffffffdd;
+      padding: 15px;
+      border-radius: 15px;
+      margin-bottom: 20px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+      animation: fadeIn 0.5s ease-in-out;
+    }
+    .arab {
+      font-size: 22px;
+      margin: 10px 0;
+      color: #2c3e50;
+      text-align: right;
+    }
+    .latin {
+      font-size: 16px;
+      color: #555;
+      margin-bottom: 8px;
+    }
+    .arti {
+      font-size: 14px;
+      color: #333;
+      font-style: italic;
+    }
+    .btn-audio {
+      background: #42a5f5;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      margin-top: 10px;
+      margin-right: 5px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .btn-audio:hover {
+      background: #1e88e5;
+    }
+    .pagination {
+      text-align: center;
+      margin: 20px;
+    }
+    .pagination button {
+      background: #66bb6a;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      margin: 5px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .pagination button:hover {
+      background: #388e3c;
+    }
+    .btn-back {
+      display: block;
+      margin: 20px auto;
+      padding: 12px 24px;
+      background: linear-gradient(135deg, #ff7043, #d84315);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .btn-back:hover {
+      background: linear-gradient(135deg, #ff8a65, #bf360c);
+    }
+    @keyframes fadeIn {
+      from {opacity: 0; transform: translateY(10px);}
+      to {opacity: 1; transform: translateY(0);}
+    }
+  </style>
+</head>
+<body>
+  <header>🙏 Do'a - do'a Harian</header>
+  <div class="container" id="doaContainer"></div>
+
+  <div class="pagination">
+    <button onclick="prevPage()">⬅ Prev</button>
+    <span id="pageInfo"></span>
+    <button onclick="nextPage()">Next ➡</button>
+  </div>
+
+  <button class="btn-back" onclick="window.location.href='materi.html'">⬅ Kembali ke Materi</button>
+
+  <!-- Elemen audio -->
+  <audio id="audioPlayer" controls hidden></audio>
+
+  <script>
+    const doaList = [
+      {judul: "Doa Sebelum Makan", arab:"اللَّهُمَّ بَارِكْ لَنَا فِيمَا رَزَقْتَنَا وَقِنَا عَذَابَ النَّارِ", latin:"Allāhumma bārik lanā fīmā razaqtanā waqinā ‘adzāban-nār", arti:"Ya Allah, berkahilah rezeki yang Engkau berikan kepada kami dan lindungilah kami dari siksa neraka"},
+      {judul: "Doa Sesudah Makan", arab:"الْحَمْدُ لِلَّهِ الَّذِي أَطْعَمَنَا وَسَقَانَا وَجَعَلَنَا مُسْلِمِينَ", latin:"Alhamdulillāhil-ladzī ath‘amanā wa saqānā wa ja‘alanā muslimīn", arti:"Segala puji bagi Allah yang telah memberi kami makan, minum, dan menjadikan kami seorang muslim"},
+      {judul: "Doa Masuk Rumah", arab: "السَّلاَمُ عَلَيْنَا وَعَلَى عِبَادِ اللَّهِ الصَّالِحِينَ",latin: "As-salāmu ‘alainā wa ‘alā ‘ibādillāhiṣ-ṣāliḥīn",arti: "Semoga keselamatan terlimpah kepada kami dan kepada hamba-hamba Allah yang shalih"},
+      {judul: "Doa Masuk WC", arab: "اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنَ الْخُبُثِ وَالْخَبَائِثِ",latin: "Allāhumma innī a‘ūdhu bika minal-khubutsi wal-khabā’its",arti: "Ya Allah, sesungguhnya aku berlindung kepada-Mu dari gangguan setan laki-laki dan setan perempuan"},
+      {judul: "Doa Selamat Dunia Akhirat", arab: "رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الْآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ",latin: "Rabbana ātinā fid-dunyā ḥasanah wa fil-ākhirati ḥasanah wa qinā ‘adhāban-nār",arti: "Ya Tuhan kami, berilah kami kebaikan di dunia dan kebaikan di akhirat, serta peliharalah kami dari siksa neraka"},
+      {judul: "Doa Sebelum Tidur", arab: "بِاسْمِكَ اللَّهُمَّ أَحْيَا وَبِاسْمِكَ أَمُوتُ",latin: "Bismika Allāhumma aḥyā wa bismika amūtu",arti: "Dengan nama-Mu ya Allah aku hidup dan dengan nama-Mu aku mati"},
+      {judul: "Doa Bangun Tidur", arab: "الحَمْدُ لِلَّهِ الَّذِي أَحْيَانَا بَعْدَ مَا أَمَاتَنَا وَإِلَيْهِ النُّشُورُ",latin: "Al-ḥamdu lillāhil-ladzī aḥyānā ba‘da mā amātanā wa ilaihin-nushūr",arti: "Segala puji bagi Allah yang telah menghidupkan kami setelah mematikan kami, dan hanya kepada-Nya kami akan kembali"},
+      {judul: "Doa Sebelum Belajar", judul: "Doa Sebelum Belajar", arab: "رَّبِّ زِدْنِي عِلْمًا وَارْزُقْنِي فَهْمًا",latin: "Rabbī zidnī ‘ilman warzuqnī fahman",arti: "Ya Tuhanku, tambahkanlah kepadaku ilmu dan berilah aku pemahaman"},
+      {judul: "Doa Sesudah Belajar", arab: "اللَّهُمَّ ارْزُقْنَا مِنْ عُلُوْمِ الْوَهْمِ وَأَكْرِمْنَا بِنُورِ الْفَهْمِ، وَافْتَحْ عَلَيْنَا بِمَعْرِفَتِكَ يَا أَرْحَمَ الرَّاحِمِينَ",latin: "Allāhumma rzuqnā min ‘ulūmil-wahmi wa akrimnā binūril-fahmi, waftaḥ ‘alainā bima‘rifatika yā arḥamar-rāḥimīn",arti: "Ya Allah, anugerahkanlah kepada kami ilmu dari ilham-Mu, muliakanlah kami dengan cahaya pemahaman, dan bukakanlah bagi kami pengetahuan tentang-Mu, wahai Dzat Yang Maha Pengasih dari segala yang pengasih"},
+      {judul: "Doa Naik Kendaraan", arab: "سُبْحَانَ الَّذِي سَخَّرَ لَنَا هَذَا وَمَا كُنَّا لَهُ مُقْرِنِينَ ۝ وَإِنَّا إِلَى رَبِّنَا لَمُنْقَلِبُونَ",latin: "Subḥānal-ladzī sakh-khara lanā hādzā wa mā kunnā lahu muqrinīn • wa innā ilā rabbinā lamunqalibūn",arti: "Maha Suci Allah yang telah menundukkan kendaraan ini untuk kami padahal kami sebelumnya tidak mampu menguasainya. Dan sesungguhnya kami akan kembali kepada Tuhan kami"},
+      // --- Doa 11-15--
+      {judul: "Doa Masuk Masjid", arab: "اَللّٰهُمَّ افْتَحْ لِيْ أَبْوَابَ رَحْمَتِكَ",latin: "Allāhumma iftaḥ lī abwāba raḥmatik",arti: "Ya Allah, bukakanlah untukku pintu-pintu rahmat-Mu"},
+      {judul: "Doa Keluar Masjid", arab: "اَللّٰهُمَّ إِنِّي أَسْأَلُكَ مِنْ فَضْلِكَ",latin: "Allāhumma innī as’aluka min faḍlik",arti: "Ya Allah, sesungguhnya aku memohon kepada-Mu karunia dari sisi-Mu"},
+      {judul: "Doa Keluar WC", arab: "الْحَمْدُ لِلَّهِ الَّذِي أَذْهَبَ عَنِّي الأَذَى وَعَافَانِي",latin: "Al-ḥamdu lillāhil-ladzī adhhaba ‘annī al-adzā wa ‘āfānī",arti: "Segala puji bagi Allah yang telah menghilangkan kotoran dari tubuhku dan menyembuhkanku"},
+      {judul: "Doa Supaya Dimudahkan", arab: "رَبِّ اشْرَحْ لِي صَدْرِي ۝ وَيَسِّرْ لِي أَمْرِي ۝ وَاحْلُلْ عُقْدَةً مِّن لِّسَانِي ۝ يَفْقَهُوا قَوْلِي",latin: "Rabbish-raḥ lī ṣadrī • wa yassir lī amrī • waḥlul ‘uqdatan min lisānī • yafqahū qawlī",arti: "Ya Tuhanku, lapangkanlah dadaku, mudahkanlah urusanku, dan lepaskanlah kekakuan dari lidahku, agar mereka memahami perkataanku"},
+      {judul: "Doa Untuk Orang Tua", arab: "اللَّهُمَّ اغْفِرْ لِي وَلِوَالِدَيَّ وَارْحَمْهُمَا كَمَا رَبَّيَانِي صَغِيرًا",latin: "Allāhumma-ghfir lī wa liwālidayya warḥamhumā kamā rabbayānī ṣaghīrā",arti: "Ya Allah, ampunilah aku dan kedua orang tuaku, serta sayangilah mereka sebagaimana mereka telah menyayangiku sejak kecil"},
+      // tambahkan doa lainnya sesuai kebutuhan...
+    ];
+
+    let currentPage = 1;
+  const doaPerPage = 10;
+  const doaContainer = document.getElementById("doaContainer");
+  const pageInfo = document.getElementById("pageInfo");
+  const audioPlayer = document.getElementById("audioPlayer");
+
+  let currentAudioIndex = null; // simpan index audio terakhir
+
+  function renderDoa() {
+    doaContainer.innerHTML = "";
+    let start = (currentPage - 1) * doaPerPage;
+    let end = start + doaPerPage;
+    let currentDoa = doaList.slice(start, end);
+
+    currentDoa.forEach((doa, index) => {
+      let doaIndex = start + index + 1;
+      let div = document.createElement("div");
+      div.className = "doa";
+      div.innerHTML = `
+        <h3>${doa.judul || "Doa"}</h3>
+        <p class="arab">${doa.arab}</p>
+        <p class="latin">${doa.latin}</p>
+        <p class="arti">Artinya: ${doa.arti}</p>
+        <button class="btn-audio" onclick="playAudio(${doaIndex})">🔊 Dengarkan</button>
+        <button class="btn-audio" onclick="pauseAudio()"> 🛑 Pause</button>
+      `;
+      doaContainer.appendChild(div);
+    });
+
+    pageInfo.textContent = `Halaman ${currentPage} dari ${Math.ceil(doaList.length / doaPerPage)}`;
+  }
+
+  function playAudio(index) {
+    if (currentAudioIndex !== index) {
+      // kalau doa beda → load audio baru
+      audioPlayer.src = `audio/doa${index}.mp3`;
+      currentAudioIndex = index;
+    }
+    audioPlayer.play();
+  }
+
+  function pauseAudio() {
+    audioPlayer.pause();
+  }
+
+  function nextPage() {
+    if (currentPage < Math.ceil(doaList.length / doaPerPage)) {
+      currentPage++;
+      renderDoa();
+    }
+  }
+
+  function prevPage() {
+    if (currentPage > 1) {
+      currentPage--;
+      renderDoa();
+    }
+  }
+
+  renderDoa();
+</script>
+</body>
+</html>
